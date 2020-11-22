@@ -33,7 +33,6 @@ def filling_tank(env,tanks,flow_speed):
     with tanks.num_tanks.request() as request:
         yield request
         yield env.process(tanks.fill_tank_timing(flow_speed))
-    
 
 def main():
 
