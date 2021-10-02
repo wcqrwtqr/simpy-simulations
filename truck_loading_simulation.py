@@ -8,12 +8,13 @@ The user can change the parameters such as number of stations and the speed of f
 import random
 import simpy
 
-RANDOM_SEED = 42   # this creates the same random number each time
-NUM_LOADING = 4    # Number of loading stations
-LOADINGTIME = 60   # Minutes it takes to clean a truck
-T_INTER     = 10   # Create a truck every ~ x hour
+RANDOM_SEED = 42    # this creates the same random number each time
+NUM_LOADING = 2     # Number of loading stations
+LOADINGTIME = 45    # Minutes it takes to clean a truck
+T_INTER     = 10    # Create a truck every ~ x hour
 SIM_TIME    = 720  # Simulation time in minutes (day and night = 1440, day only = 720)
-DRIVETIME   = 10   # Driving the truck to the station to commence the loading or exit the station
+DRIVETIME   = 5    # Driving the truck to the station to commence the loading or exit the station
+NO_TRUCKS   = 4     # Number of trucks that can be available at one time
 
 class Loadingtruck(object):
     """A lading has a limited number of loading stations (``NUM_LOADING``) to
@@ -52,7 +53,8 @@ def truck(env, name, cw):
     with cw.loadingstation.request() as request:
         yield request
 
-        print('🚚....%s drives to loading station at %.1f hours.' % (name, env.now/60))
+        print(f'🚚....{name} drives to loading station at {round(env.now/60,0)} hours.')
+        # print('🚚....%s drives to loading station at %.1f hours.' % (name, env.now/60))
         yield env.process(cw.drivetrucktostation(name))
 
         print('%s Start loading process at %.1f hours. 🕓 ' % (name, env.now/60))
@@ -70,7 +72,7 @@ def setup(env, num_loading_station, loadingtime, t_inter):
     loadingtruck = Loadingtruck(env, num_loading_station, loadingtime)
 
     # Create 4 initial trucks
-    for i in range(4):
+    for i in range(NO_TRUCKS):
         env.process(truck(env, 'Truck %d' % i, loadingtruck))
 
     # Create more trucks while the simulation is running
@@ -82,7 +84,16 @@ def setup(env, num_loading_station, loadingtime, t_inter):
 
 
 # Setup and start the simulation
+print('*******************Start Simulation*****************')
+print('Parameters:')
+print(f'{NUM_LOADING} total loading stations')
+print(f'{LOADINGTIME} minutes for filling one truck')
+print(f'{DRIVETIME} minutes of driving in and out of the loading station')
+print(f'{SIM_TIME/60} hours of operation time')
+print(f'{NO_TRUCKS} trucks that can be supplied at one time')
+print('====================================================')
 print('Loading truck Start')
+print('====================================================')
 # print('Check out http://youtu.be/fXXmeP9TvBg while simulating ... ;-)')
 random.seed(RANDOM_SEED)  # This helps reproducing the results
 
@@ -92,3 +103,5 @@ env.process(setup(env, NUM_LOADING, LOADINGTIME, T_INTER))
 
 # Execute!
 env.run(until=SIM_TIME)
+print('====================================================')
+print('\n')
