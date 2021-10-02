@@ -1,30 +1,19 @@
 """
-Carwash example.
+The truck loading simulation is for simulating the number of trucks which are able to enter a loading station and get filled
+with oil and leave, the simulation can get us a clear number of trucks that can be served at a given time and how increasing the number
+of loading stations will affect the total of trucks each day.
 
-Covers:
-
-- Waiting for other processes
-- Resources: Resource
-
-Scenario:
-  A loading station has a limited number of washing machines and defines
-  a washing processes that takes some (random) time.
-
-  Car processes arrive at the loading station at a random time. If one washing
-  machine is available, they start the washing process and wait for it
-  to finish. If not, they wait until they an use one.
-
+The user can change the parameters such as number of stations and the speed of filling and see the results
 """
 import random
 import simpy
 
-
-RANDOM_SEED = 42
-NUM_LOADING = 2  # Number of loading stations
-LOADINGTIME = 60      # Minutes it takes to clean a truck
-T_INTER = 10       # Create a truck every ~ x hour
-SIM_TIME = 1440     # Simulation time in minutes
-DRIVETIME = 10      # Driving the truck to start the loading or exit the station
+RANDOM_SEED = 42   # this creates the same random number each time
+NUM_LOADING = 4    # Number of loading stations
+LOADINGTIME = 60   # Minutes it takes to clean a truck
+T_INTER     = 10   # Create a truck every ~ x hour
+SIM_TIME    = 720  # Simulation time in minutes (day and night = 1440, day only = 720)
+DRIVETIME   = 10   # Driving the truck to the station to commence the loading or exit the station
 
 class Loadingtruck(object):
     """A lading has a limited number of loading stations (``NUM_LOADING``) to
@@ -58,7 +47,6 @@ def truck(env, name, cw):
 
     It then starts the loading process, waits for it to finish and
     leaves to never come back ...
-
     """
     # print('%s arrives at the loading station at %.1f.' % (name, env.now))
     with cw.loadingstation.request() as request:
