@@ -17,4 +17,9 @@ pip install simpy
 
 python3 truck_loading_simulation.py
 ```
+To get the output sent to a file in your preferred path use the folling command and use the >> to ensure the values are being appended so you can get more simulation in the same file and can compare between features easly
 
+```bash
+python3 truck_loading_simulation.py >> /tmp/simpy
+```
+The file simpy (you can choose the file name and location you like) will get the results of the simulation 
